@@ -1,0 +1,21 @@
+---
+
+- name: lookup docker registry exists or not
+  shell: docker images |grep registry
+  register: result
+
+- name: pull registry
+  shell: docker run -d -v /opt/registry:/var/lib/registry -p "{{ docker_registry }}:5000" --restart=always --name registry registry:2.1.1
+  when: result.stdout.find("registry") == -1 
+
+- name: ungzip base.tar.gz
+  unarchive:
+    src: base.tar.gz
+    dest: /tmp/
+    copy: yes
+
+- name: docker build centos-base
+  shell: docker build /tmp/base -t  "{{ docker_registry }}/{{ docker_namespace }}/centos-binary-base:{{ openstack_release }}"
+
+- name: push centos-base to registry
+  shell: docker push "{{ docker_registry }}/{{ docker_namespace }}/centos-binary-base:{{ openstack_release }}"

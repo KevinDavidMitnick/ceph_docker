@@ -6,3 +6,7 @@ depency:
     ansible:1.9.6
     docker:1.3
     docker-py:latest
+exec:ansible-playbook -i inventory/hosts -e  action=deploy site.yml
+
+ceph osd prefix must be:KOLLA_CEPH_OSD_BOOTSTRAP to be found
+

@@ -6,8 +6,15 @@
 
 - include: install_python.yml
 
-- include: pull.yml
-
 - include: bootstrap.yml
+
+- include: build_base.yml
+  delegate_to: localhost
+
+- include:  build_kolla_toolbox.yml
+  delegate_to: localhost
+
+- include: build_kolla_toolbox.yml
+  delegate_to: localhost
 
 - include: start.yml

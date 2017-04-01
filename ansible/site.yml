@@ -1,10 +1,19 @@
 ---
+
+- hosts:
+    - common
+  roles:
+    - common
+
+- hosts:
+    - docker
+  roles:
+    - docker
+
 - hosts:
     - ceph-mon
     - ceph-osd
     - ceph-rgw
   roles:
-    - { role: ceph,
-        tags: ceph,
-        when: enable_ceph | bool }
+    - ceph
 

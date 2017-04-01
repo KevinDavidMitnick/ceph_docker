@@ -1,0 +1,26 @@
+---
+
+- name: ungzip kolla-toolbox.tar.gz
+  unarchive:
+    src: kolla-toolbox.tar.gz
+    dest: /tmp/
+    copy: yes
+
+- name: change registry
+  shell: sed -i 's/REGISTRY/{{ docker_registry }}/g' /tmp/kolla-toolbox/Dockerfile
+
+- name: change namespace
+  shell: sed -i 's/NAMESPACE/{{ docker_namespace }}/g' /tmp/kolla-toolbox/Dockerfile
+
+- name: change tag
+  shell: sed -i 's/TAG/centos-binary-base/g' /tmp/kolla-toolbox/Dockerfile
+
+- name: change version
+  shell: sed -i 's/VERSION/{{ openstack_release }}/g' /tmp/kolla-toolbox/Dockerfile
+
+- name: docker build kolla-toolbox
+  shell: docker build /tmp/kolla-toolbox -t  "{{ docker_registry }}/{{ docker_namespace }}/centos-binary-kolla-toolbox:{{ openstack_release }}"
+
+- name: push kolla-toolbox to registry
+  shell: docker push "{{ docker_registry }}/{{ docker_namespace }}/centos-binary-kolla-toolbox:{{ openstack_release }}"
+

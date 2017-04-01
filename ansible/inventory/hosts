@@ -1,5 +1,11 @@
 # These initial groups are the only groups required to be modified. The
 
+[common]
+control01
+
+[docker]
+localhost
+
 [control]
 control01
 

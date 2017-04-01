@@ -1,0 +1,25 @@
+---
+
+- name: ungzip ceph-mon.tar.gz
+  unarchive:
+    src: ceph-mon.tar.gz
+    dest: /tmp/
+    copy: yes
+
+- name: change registry
+  shell: sed -i 's/REGISTRY/{{ docker_registry }}/g' /tmp/ceph-base/Dockerfile
+
+- name: change namespace
+  shell: sed -i 's/NAMESPACE/{{ docker_namespace }}/g' /tmp/ceph-base/Dockerfile
+
+- name: change tag
+  shell: sed -i 's/TAG/centos-binary-ceph-base/g' /tmp/ceph-base/Dockerfile
+
+- name: change version
+  shell: sed -i 's/VERSION/{{ openstack_release }}/g' /tmp/ceph-base/Dockerfile
+
+- name: docker build centos-mon
+  shell: docker build /tmp/ceph-mon -t  "{{ docker_registry }}/{{ docker_namespace }}/centos-binary-ceph-mon:{{ openstack_release }}"
+
+- name: push centos-mon to registry
+  shell: docker push "{{ docker_registry }}/{{ docker_namespace }}/centos-binary-ceph-mon:{{ openstack_release }}"

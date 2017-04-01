@@ -1,0 +1,9 @@
+---
+
+- include: build_ceph_base.yml  
+
+- include: build_ceph_mon.yml  
+
+- include: build_ceph_osd.yml  
+
+- include: build_ceph_rgw.yml
