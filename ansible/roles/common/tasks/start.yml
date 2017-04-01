@@ -1,0 +1,17 @@
+---
+- name: Starting kolla-toolbox container
+  kolla_docker:
+    action: "start_container"
+    common_options: "{{ docker_common_options }}"
+    environment:
+      ANSIBLE_NOCOLOR: "1"
+      ANSIBLE_LIBRARY: "/usr/share/ansible"
+    image: "{{ ansible_image_full }}"
+    name: "kolla_toolbox"
+    privileged: True
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/dev/:/dev/"
+      - "/run/:/run/:shared"
+      - "kolla_logs:/var/log/kolla/"
+

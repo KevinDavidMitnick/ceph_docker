@@ -1,0 +1,16 @@
+# These initial groups are the only groups required to be modified. The
+
+[control]
+control01
+
+[storage]
+control01
+
+[ceph-mon:children]
+control
+
+[ceph-rgw:children]
+control
+
+[ceph-osd:children]
+storage

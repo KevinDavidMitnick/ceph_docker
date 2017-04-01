@@ -1,0 +1,7 @@
+---
+
+- include: pull.yml
+
+- include: bootstrap.yml
+
+- include: start.yml
