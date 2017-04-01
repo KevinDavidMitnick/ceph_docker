@@ -1,0 +1,22 @@
+---
+- name: change repo to local yum repo, first delete all origin repo
+  file:
+    state: absent
+    path: /etc/yum.repos.d
+
+- name: create repo dir
+  file:
+    state: directory
+    path: /etc/yum.repos.d
+
+
+- name: copy repo files to yum.repos.d
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/yum.repos.d/{{ item }}"
+  with_items:
+    - "CentOS-Base.repo"
+    - "epel.repo"
+
+- name: yum makecache and makeclean
+  shell: yum clean all && yum makecache

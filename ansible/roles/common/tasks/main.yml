@@ -1,5 +1,11 @@
 ---
 
+- include: chyum.yml
+
+- include: install_docker.yml
+
+- include: install_python.yml
+
 - include: pull.yml
 
 - include: bootstrap.yml
