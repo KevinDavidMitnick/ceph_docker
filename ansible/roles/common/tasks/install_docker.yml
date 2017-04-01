@@ -1,76 +1,22 @@
 ---
-- name: install systemd device-mapper libseccomp
+
+- name: make sure docker engine is not installed
   yum:
-    name: "{{ item }}"
-    state: latest
-  with_items:
-    - "systemd"
-    - "device-mapper"
-    - "libseccomp"
+    name: docker-engine
+    state: absent
 
-- name: upgrade docker
+- name: copy docker rpm to /tmp
   copy:
-    src: "{{ item }}"
-    dest: "/usr/bin/{{ item }}"
-    mode: "0755"
-  with_items:
-    - "docker"
-    - "docker-containerd-current"
-    - "docker-containerd-shim-current"
-    - "docker-current"
-    - "dockerd-current"
-    - "docker-containerd"
-    - "docker-containerd-shim"
-    - "docker-ctr-current"
-    - "dockerd"
-    - "docker-storage-setup"
+    src: docker-engine-1.13.1-1.el7.centos.x86_64.rpm
+    dest: /tmp/docker-engine-1.13.1-1.el7.centos.x86_64.rpm
 
-- name: upgrade docker config files
+- name: install docker
+  shell: yum install -y /tmp/docker-engine-1.13.1-1.el7.centos.x86_64.rpm
+
+- name: modify service file
   template:
-    src: "{{ item }}.j2"
-    dest: "/etc/sysconfig/{{ item }}"
-    mode: "0755"
-  with_items:
-    - "docker"
-    - "docker-network"
-    - "docker-storage"
-    - "docker-storage-setup"
-
-- name: create /etc/docker dir
-  file:
-    state: directory
-    path: /etc/docker
-
-- name: copy daemon.json to /etc/docker
-  template:
-    src: "{{ item }}.j2"
-    dest: "/etc/docker/{{ item }}"
-  with_items:
-    - "daemon.json"
-
-- name: create /usr/libexec/docker dir
-  file:
-    state: directory
-    path: /usr/libexec/docker
-
-- name: copy libexec/docker files to /usr/lib/exec/docker
-  copy:
-    src: "{{ item }}"
-    dest: "/usr/libexec/docker/{{ item }}"
-    mode: "0755"
-  with_items:
-    - "docker-proxy-current"
-    - "docker-runc-current"
-
-- name: upgrade docker service file
-  template:
-    src: "{{ item }}.j2"
-    dest: "/usr/lib/systemd/system/{{ item }}"
-  with_items:
-    - "docker.service"
-    - "docker-cleanup.service"
-    - "docker-storage-setup.service"
-    - "docker-cleanup.timer"
+    src: docker.service.j2
+    dest: /usr/lib/systemd/system/docker.service
 
 - name: reload systemctl daemon
   command: systemctl daemon-reload

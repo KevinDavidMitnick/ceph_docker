@@ -19,8 +19,8 @@
   shell: sed -i 's/VERSION/{{ openstack_release }}/g' /tmp/ceph-base/Dockerfile
 
 - name: docker build ceph-base
-  shell: docker build /tmp/ceph-base -t  "{{ docker_registry }}/{{ docker_namespace }}/centos-binary-ceph-base:{{ openstack_release }}"
+  shell: docker build /tmp/ceph-base -t  {{ docker_registry }}/{{ docker_namespace }}/centos-binary-ceph-base:{{ openstack_release }}
 
 - name: push ceph-base to registry
-  shell: docker push "{{ docker_registry }}/{{ docker_namespace }}/centos-binary-ceph-base:{{ openstack_release }}"
+  shell: docker push {{ docker_registry }}/{{ docker_namespace }}/centos-binary-ceph-base:{{ openstack_release }}
 

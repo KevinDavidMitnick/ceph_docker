@@ -28,3 +28,4 @@
     name: ansible
     version: 1.9.6
   delegate_to: localhost
+

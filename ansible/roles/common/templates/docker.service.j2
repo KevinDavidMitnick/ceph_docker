@@ -1,37 +1,29 @@
 [Unit]
 Description=Docker Application Container Engine
-Documentation=http://docs.docker.com
-After=network.target
-Wants=docker-storage-setup.service
-Requires=docker-cleanup.timer
+Documentation=https://docs.docker.com
+After=network.target firewalld.service
 
 [Service]
 Type=notify
-NotifyAccess=all
-EnvironmentFile=-/etc/sysconfig/docker
-EnvironmentFile=-/etc/sysconfig/docker-storage
-EnvironmentFile=-/etc/sysconfig/docker-network
-Environment=GOTRACEBACK=crash
-Environment=DOCKER_HTTP_HOST_COMPAT=1
-Environment=PATH=/usr/libexec/docker:/usr/bin:/usr/sbin
-MountFlags=shared
-ExecStart=/usr/bin/dockerd-current \
-          --add-runtime docker-runc=/usr/libexec/docker/docker-runc-current \
-          --default-runtime=docker-runc \
-          --exec-opt native.cgroupdriver=systemd \
-          --userland-proxy-path=/usr/libexec/docker/docker-proxy-current \
-          $OPTIONS \
-          $DOCKER_STORAGE_OPTIONS \
-          $DOCKER_NETWORK_OPTIONS \
-          $ADD_REGISTRY \
-          $BLOCK_REGISTRY \
-          $INSECURE_REGISTRY
+# the default is not to use systemd for cgroups because the delegate issues still
+# exists and systemd currently does not support the cgroup feature set required
+# for containers run by docker
+ExecStart=/usr/bin/dockerd --registry-mirror=https://u1qbyfsc.mirror.aliyuncs.comservice --insecure-registry={{ docker_registry }}
 ExecReload=/bin/kill -s HUP $MAINPID
-LimitNOFILE=1048576
-LimitNPROC=1048576
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNOFILE=infinity
+LimitNPROC=infinity
 LimitCORE=infinity
+# Uncomment TasksMax if your systemd version supports it.
+# Only systemd 226 and above support this version.
+#TasksMax=infinity
 TimeoutStartSec=0
-Restart=on-abnormal
+# set delegate yes so that systemd does not reset the cgroups of docker containers
+Delegate=yes
+# kill only the docker process, not all processes in the cgroup
+KillMode=process
+MountFlags=shared
 
 [Install]
 WantedBy=multi-user.target
